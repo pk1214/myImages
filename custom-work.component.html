@@ -1,0 +1,169 @@
+<div class="container dashboard-container mt-5 mb-5">
+  <h2 class="mb-4 dashboard-heading text-center">Request Custom Work</h2>
+
+  <!-- Artist Selection Section -->
+  <div class="mb-4">
+    <h4 class="mb-3">Select an Artist</h4>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <div class="col" *ngFor="let artist of artists">
+        <div
+          class="card h-100 shadow-sm"
+          [class.selected]="selectedArtist && selectedArtist._id === artist._id"
+          (click)="selectArtist(artist)"
+        >
+          <img
+            [src]="artist.profile_picture"
+            [alt]="artist.name"
+            class="card-img-top artwork-img"
+          />
+          <div class="card-body">
+            <h5 class="card-title">{{ artist.name }}</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Work Request Form -->
+  <form [formGroup]="customWorkForm" (ngSubmit)="submitRequest()">
+    <div class="mb-4">
+      <label for="title" class="form-label">Title of Custom Work</label>
+      <input
+        type="text"
+        id="title"
+        class="form-control"
+        formControlName="title"
+        placeholder="Enter title"
+      />
+      <div
+        *ngIf="
+          customWorkForm.get('title')?.invalid &&
+          customWorkForm.get('title')?.touched
+        "
+        class="text-danger"
+      >
+        <small>Title is required.</small>
+      </div>
+    </div>
+    <div class="mb-4">
+      <label for="description" class="form-label">Description</label>
+      <textarea
+        id="description"
+        class="form-control"
+        formControlName="description"
+        rows="3"
+        placeholder="Describe your custom work"
+      ></textarea>
+      <div
+        *ngIf="
+          customWorkForm.get('description')?.invalid &&
+          customWorkForm.get('description')?.touched
+        "
+        class="text-danger"
+      >
+        <small>Description is required.</small>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end">
+      <button
+        type="submit"
+        class="btn btn-success"
+        [disabled]="customWorkForm.invalid || !selectedArtist"
+      >
+        Submit Request
+      </button>
+    </div>
+  </form>
+
+  <!-- Toggle Button for Commission Requests Section -->
+  <div class="text-end my-4">
+    <button class="btn btn-primary" (click)="toggleCommissionRequests()">
+      {{
+        showCommissionRequests
+          ? "Hide My Commission Requests"
+          : "Show My Commission Requests"
+      }}
+    </button>
+  </div>
+
+  <!-- Commission Requests Section for User (toggle visibility) -->
+  <div *ngIf="showCommissionRequests">
+    <h3 class="mb-3 dashboard-heading text-center" style="font-weight: 400">
+      Your Custom Work Requests
+    </h3>
+    <ng-container
+      *ngIf="
+        userCommissionRequests && userCommissionRequests.length > 0;
+        else noRequests
+      "
+    >
+      <div class="row g-4">
+        <div class="col-12" *ngFor="let request of userCommissionRequests">
+          <div class="card shadow-sm mb-3">
+            <div class="card-body">
+              <h5 class="card-title">{{ request.title }}</h5>
+              <p class="card-text">
+                <strong>Description:</strong> {{ request.description }}
+              </p>
+              <p class="card-text">
+                <strong>Status:</strong> {{ request.status }}
+              </p>
+              <!-- When the request status is "price proposed", show user decision buttons -->
+              <div *ngIf="request.status === 'pending'">
+                <p class="text-primary mt-2">
+                  Request sent. Please Wait. 
+                </p>
+              </div>
+              <div *ngIf="request.status === 'declined by artist'">
+                <p class="text-danger mt-2">
+                  Request declined by artist.
+                </p>
+              </div>
+              <div *ngIf="request.status === 'price proposed'">
+                <p class="text-info mt-2">
+                  The artist has proposed a price of ₹{{ request.price }} for
+                  this commission. Do you accept this price?
+                </p>
+                <button
+                  class="btn btn-success btn-sm me-2"
+                  (click)="userDecision(request, 'accept')"
+                >
+                  Accept Price
+                </button>
+                <button
+                  class="btn btn-danger btn-sm"
+                  (click)="userDecision(request, 'reject')"
+                >
+                  Reject Price
+                </button>
+              </div>
+              <div *ngIf="request.status === 'declined by user'">
+                <p class="text-danger mt-2">
+                  You have declined the proposed price.
+                </p>
+              </div>
+              <div *ngIf="request.status === 'price accepted'">
+                <p class="text-success mt-2">
+                  You accepted the proposed price. Work in progress...
+                </p>
+              </div>
+              <div *ngIf="request.status === 'completed'">
+                <p class="text-info mt-2">
+                  Your Work is completed and out for delivery.
+                </p>
+              </div>
+              <div *ngIf="request.status === 'delivered'">
+                <p class="text-success mt-2">Work delivered successfully!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #noRequests>
+      <div class="text-center">
+        <p class="card-text">No custom work requests available.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>
