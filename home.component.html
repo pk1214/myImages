@@ -1,0 +1,120 @@
+<div class="container dashboard-container mt-5 mb-5">
+  <!-- Featured Artworks Section -->
+  <ng-container *ngIf="featuredArtworks && featuredArtworks.length > 0">
+    <h2 class="mb-4 dashboard-heading" style="font-weight: 400">
+      Featured Artworks
+    </h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <div class="col" *ngFor="let art of featuredArtworks">
+        <div class="card h-100 shadow-sm">
+          <!-- Display only the first image from the images array -->
+          <img
+            [src]="'http://localhost:3005' + art.image"
+            [alt]="art.title"
+            class="card-img-top artwork-img"
+          />
+          <div class="card-body">
+            <h5 class="card-title">{{ art.title }}</h5>
+            <p class="card-text"><strong>Price:</strong> ₹{{ art.price }}</p>
+            <a
+              [routerLink]="['/user/viewdetails', art.id]"
+              class="btn btn-outline-dark btn-sm mt-2"
+            >
+              View Details
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr />
+  </ng-container>
+
+  <!-- Filter Section -->
+  <div class="row mb-4">
+    <!-- Category Filter -->
+    <div class="col-md-4">
+      <label for="category-filter" class="form-label">Style:</label>
+      <select
+        id="category-filter"
+        class="form-select"
+        [(ngModel)]="selectedCategory"
+        (change)="onFilterChange()"
+      >
+        <option value="">All</option>
+        <option value="Landscape">Landscape</option>
+        <option value="Abstract">Abstract</option>
+        <option value="Nature">Portrait</option>
+        <option value="Urban">Modern</option>
+      </select>
+    </div>
+    <!-- Artist Filter -->
+    <div class="col-md-4">
+      <label for="artist-filter" class="form-label">Medium:</label>
+      <select
+        id="artist-filter"
+        class="form-select"
+        [(ngModel)]="selectedMedium"
+        (change)="onFilterChange()"
+      >
+        <option value="">All</option>
+        <option value="Oil">Oil</option>
+        <option value="Acrylic">Acrylic</option>
+        <option value="Watercolor">Watercolor</option>
+        <option value="Digital">Digital</option>
+      </select>
+    </div>
+    <!-- Price Filter -->
+    <div class="col-md-4">
+      <div class="row">
+        <div class="col">
+          <label for="minPrice" class="form-label">Min Price:</label>
+          <input
+            type="number"
+            id="minPrice"
+            class="form-control"
+            [(ngModel)]="minPrice"
+            (change)="onFilterChange()"
+            placeholder="Min price"
+            min="0"
+          />
+        </div>
+        <div class="col">
+          <label for="maxPrice" class="form-label">Max Price:</label>
+          <input
+            type="number"
+            id="maxPrice"
+            class="form-control"
+            [(ngModel)]="maxPrice"
+            (change)="onFilterChange()"
+            placeholder="Max price"
+            min="0"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Art Grid -->
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="col" *ngFor="let art of filteredArts">
+      <div class="card h-100 shadow-sm">
+        <!-- Display only the first image from the images array -->
+        <img
+          [src]="'http://localhost:3005' + art.image"
+          [alt]="art.title"
+          class="card-img-top artwork-img"
+        />
+        <div class="card-body">
+          <h5 class="card-title">{{ art.title }}</h5>
+          <p class="card-text"><strong>Price:</strong> ₹{{ art.price }}</p>
+          <a
+            [routerLink]="['/user/viewdetails', art.id]"
+            class="btn btn-outline-dark btn-sm mt-2"
+          >
+            View Details
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
